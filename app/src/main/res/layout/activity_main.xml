@@ -5,15 +5,72 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/md_theme_background"
     tools:context=".MainActivity">
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_horizontal_30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.30" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_horizontal_80"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.80" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Tres en Raya"
+        android:textColor="@color/md_theme_inverseSurface"
+        android:textSize="50sp"
+        app:layout_constraintBottom_toTopOf="@id/guide_horizontal_30"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guide_horizontal_30"
+        app:layout_constraintBottom_toTopOf="@id/guide_horizontal_80">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:background="@drawable/round_shape"
+            android:gravity="center"
+            android:text="JUGADOR VS PC"
+            android:textColor="@color/md_theme_inverseSurface"
+            android:textSize="22sp" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="JUGADOR VS JUGADOR"
+            android:gravity="center"
+            android:textColor="@color/md_theme_inverseSurface"
+            android:textSize="22sp"
+            android:background="@color/md_theme_secondaryFixedDim"
+            android:layout_marginVertical="20dp"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PC VS PC"
+            android:gravity="center"
+            android:textColor="@color/md_theme_inverseSurface"
+            android:textSize="22sp"
+            android:background="@color/md_theme_secondaryFixedDim"/>
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
