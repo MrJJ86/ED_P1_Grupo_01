@@ -1,8 +1,10 @@
 package com.game.ed_p1_grupo_01.elements;
 
+import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Objects;
 
-public class Token {
+public class Token implements Serializable, Comparable<Token> {
     private boolean isPlayer1;
     private int positionX;
     private int positionY;
@@ -52,5 +54,12 @@ public class Token {
     @Override
     public int hashCode() {
         return Objects.hash(isPlayer1, positionX, positionY);
+    }
+
+    @Override
+    public int compareTo(Token o) {
+        int compPosX = this.positionX - o.positionX;
+        if(compPosX != 0) return compPosX;
+        return this.positionY - o.positionY;
     }
 }
