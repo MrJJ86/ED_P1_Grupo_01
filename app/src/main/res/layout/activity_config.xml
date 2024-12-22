@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/md_theme_background"
+    tools:context="com.game.ed_p1_grupo_01.controller.ConfigActivity">
+
+    <!-- Botón de regreso más grande y correctamente restringido -->
+
+    <!-- Título de la pantalla -->
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Regresar"
+        android:src="@drawable/baseline_arrow_back_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_config_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Configuración del Juego"
+        android:textColor="@color/md_theme_primary"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_back" />
+
+    <!-- Selección de símbolo para el jugador -->
+    <TextView
+        android:id="@+id/tv_player_symbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Símbolo del Jugador"
+        android:textSize="20sp"
+        android:textColor="@color/md_theme_onBackground"
+        app:layout_constraintTop_toBottomOf="@id/tv_config_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="30dp" />
+
+    <RadioGroup
+        android:id="@+id/rg_symbols"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/tv_player_symbol"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp">
+        <RadioButton
+            android:id="@+id/rb_symbol_x"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="X"
+            android:textColor="@color/md_theme_onBackground" />
+        <RadioButton
+            android:id="@+id/rb_symbol_o"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="O"
+            android:textColor="@color/md_theme_onBackground" />
+    </RadioGroup>
+
+    <!-- Selección de quién empieza -->
+    <TextView
+        android:id="@+id/tv_starting_player"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Quién inicia el juego?"
+        android:textSize="20sp"
+        android:textColor="@color/md_theme_onBackground"
+        app:layout_constraintTop_toBottomOf="@id/rg_symbols"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="30dp" />
+
+    <RadioGroup
+        android:id="@+id/rg_starting_player"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/tv_starting_player"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp">
+        <RadioButton
+            android:id="@+id/rb_player_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jugador 1"
+            android:textColor="@color/md_theme_onBackground" />
+        <RadioButton
+            android:id="@+id/rb_computer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Computadora"
+            android:textColor="@color/md_theme_onBackground" />
+    </RadioGroup>
+
+    <!-- Botón para iniciar el juego -->
+    <Button
+        android:id="@+id/btn_start_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Iniciar Juego"
+        android:background="@drawable/round_shape"
+        android:textColor="@color/md_theme_inverseSurface"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/rg_starting_player"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

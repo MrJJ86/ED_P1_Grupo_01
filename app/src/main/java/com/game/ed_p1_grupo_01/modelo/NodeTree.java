@@ -1,4 +1,4 @@
-package com.game.ed_p1_grupo_01.data_structure;
+package com.game.ed_p1_grupo_01.modelo;
 
 import java.util.LinkedList;
 
