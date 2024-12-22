@@ -1,7 +1,5 @@
 package com.game.ed_p1_grupo_01.modelo;
 
-import com.game.ed_p1_grupo_01.elements.*;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 

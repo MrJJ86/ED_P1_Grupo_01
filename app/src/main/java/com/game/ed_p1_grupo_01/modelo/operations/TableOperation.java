@@ -1,4 +1,4 @@
-package com.game.ed_p1_grupo_01.operations;
+package com.game.ed_p1_grupo_01.modelo.operations;
 
 public class TableOperation {
     public static final int[][][] POSITIONS ={
