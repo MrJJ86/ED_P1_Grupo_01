@@ -1,37 +1,67 @@
 package com.game.ed_p1_grupo_01.modelo;
 
-import com.game.ed_p1_grupo_01.modelo.operations.TableOperation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 public class GameTable implements Serializable {
-    public static final int[][] TABLEPOSITIONS = {
-            {0,0},{0,1},{0,2},
-            {1,0},{1,1},{1,2},
-            {2,0},{2,1},{2,2}
-    };
-    private boolean isPlayer1Turn;
+    private Tree<GameTable> gameTree;
     private ArrayList<Token> tokens;
+    public static final int[][][] POSITIONS ={
+            //Horizontal
+            {{0,0},{0,1},{0,2}},
+            {{1,0},{1,1},{1,2}},
+            {{2,0},{2,1},{2,2}},
+            //Vertical
+            {{0,1},{1,0},{2,0}},
+            {{0,1},{1,1},{2,1}},
+            {{0,2},{1,2},{2,2}},
+            //Diagonal
+            {{0,0},{1,1},{2,2}},
+            {{0,2},{1,1},{2,0}}
+    };
 
 
     public GameTable() {
+        this.gameTree = new Tree<>(this);
         this.tokens = new ArrayList<>();
     }
-    public GameTable(ArrayList<Token> tokens, boolean isPlayer1Turn){
-        this.tokens = tokens;
-        this.isPlayer1Turn = isPlayer1Turn;
+
+    /**
+     * Constructor para inicializar un tablero con una lista de tokens y un estado.
+     *
+     * @param tokens Lista de tokens colocados en el tablero.
+     */
+    public GameTable(ArrayList<Token> tokens) {
+        this.tokens = new ArrayList<>(tokens);
+        this.gameTree = new Tree<>(this);
+    }
+    /**
+     * Crea una copia del estado actual del tablero.
+     *
+     * @return Una nueva instancia de GameTable con los mismos tokens.
+     */
+    @Override
+    public GameTable clone() {
+        ArrayList<Token> clonedTokens = new ArrayList<>();
+        for (Token token : this.tokens) {
+            clonedTokens.add(new Token(token.isPlayer1(), token.getPositionX(), token.getPositionY()));
+        }
+        return new GameTable(clonedTokens);
     }
 
-    public boolean isPlayer1Turn() {
-        return isPlayer1Turn;
+
+
+    public Tree<GameTable> getGameTree() {
+        return gameTree;
     }
 
-    public void setPlayer1Turn(boolean player1Turn) {
-        isPlayer1Turn = player1Turn;
+    public void setGameTree(Tree<GameTable> gameTree) {
+        this.gameTree = gameTree;
     }
 
     public ArrayList<Token> getTokens() {
@@ -40,20 +70,6 @@ public class GameTable implements Serializable {
 
     public void setTokens(ArrayList<Token> tokens) {
         this.tokens = tokens;
-    }
-
-    /**
-     * Intenta colocar un token en el tablero en la posición especificada.
-     *
-     * @param token el token que se desea colocar.
-     * @return {@code true} si el token se colocó con éxito, {@code false} si la posición ya estaba ocupada.
-     */
-    public boolean setToken(Token token){
-        if(positionIsEmpty(token.getPositionX(), token.getPositionY())){
-            tokens.add(token);
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -73,6 +89,20 @@ public class GameTable implements Serializable {
     }
 
     /**
+     * Intenta colocar un token en el tablero en la posición especificada.
+     *
+     * @param token el token que se desea colocar.
+     * @return {@code true} si el token se colocó con éxito, {@code false} si la posición ya estaba ocupada.
+     */
+    public boolean setToken(Token token){
+        if(positionIsEmpty(token.getPositionX(), token.getPositionY())){
+            tokens.add(token);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Verifica si el juego ha terminado. El juego termina si hay un ganador
      * o si se cumplen las condiciones mínimas para evaluar un ganador.
      *
@@ -82,7 +112,9 @@ public class GameTable implements Serializable {
         if(tokens.size() >= 5){
             ArrayList<Token> player1 = new ArrayList<>();
             ArrayList<Token> player2 = new ArrayList<>();
-            Comparator<Token> comp = Token::compareTo;
+            Comparator<Token> comp = (t1,t2) -> {
+                return t1.compareTo(t2);
+            };
             player1.sort(comp);
             player2.sort(comp);
 
@@ -116,7 +148,7 @@ public class GameTable implements Serializable {
             tokenMap.put(key, token);
         }
 
-        for (int[][] positionGroup : TableOperation.POSITIONS) {
+        for (int[][] positionGroup : POSITIONS) {
             ArrayList<Token> temporal = new ArrayList<>();
 
             for (int[] pos : positionGroup) {
@@ -135,10 +167,48 @@ public class GameTable implements Serializable {
 
         return null;
     }
+    /**
+     * Determina de quién es el turno actual.
+     *
+     * @return {@code true} si es el turno del jugador 1, {@code false} si es el turno del jugador 2.
+     */
+    public boolean isPlayer1Turn() {
+        // Cuenta los tokens colocados en el tablero
+        int player1Tokens = 0;
+        int player2Tokens = 0;
 
+        for (Token token : tokens) {
+            if (token.isPlayer1()) {
+                player1Tokens++;
+            } else {
+                player2Tokens++;
+            }
+        }
+
+        // El turno es del jugador 1 si el número de tokens del jugador 1 es menor o igual al del jugador 2
+        return player1Tokens <= player2Tokens;
+    }
+
+
+    /**
+     * Obtiene todas las posiciones disponibles en el tablero.
+     *
+     * @return Una lista de arreglos de dos enteros que representan las posiciones vacías.
+     */
+    public ArrayList<int[]> getAvailablePositions() {
+        ArrayList<int[]> availablePositions = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (positionIsEmpty(i, j)) {
+                    availablePositions.add(new int[]{i, j});
+                }
+            }
+        }
+        return availablePositions;
+    }
 
 
     public void computerProcess(){
-        Tree.TreeTable(this);
+
     }
 }
