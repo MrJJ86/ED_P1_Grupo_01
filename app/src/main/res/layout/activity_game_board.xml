@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     android:background="@color/md_theme_background"
-    tools:context="com.game.ed_p1_grupo_01.controller.GameBoardActivity">
+    tools:context="com.game.ed_p1_grupo_01.view.GameBoardActivity">
 
     <!-- Botón de regreso -->
     <ImageButton

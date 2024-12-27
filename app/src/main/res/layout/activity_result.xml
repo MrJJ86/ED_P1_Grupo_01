@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/md_theme_background"
     android:padding="16dp"
-    tools:context="com.game.ed_p1_grupo_01.controller.ResultActivity"
+    tools:context="com.game.ed_p1_grupo_01.view.ResultActivity"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="418dp">
 

@@ -1,4 +1,4 @@
-package com.game.ed_p1_grupo_01.controller;
+package com.game.ed_p1_grupo_01.view;
 
 import android.os.Bundle;
 
@@ -10,13 +10,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.game.ed_p1_grupo_01.R;
 
-public class TreeVisualizationActivity extends AppCompatActivity {
+public class ResultActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_tree_visualization);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_tree_visualization), (v, insets) -> {
+        setContentView(R.layout.activity_result);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_result), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;

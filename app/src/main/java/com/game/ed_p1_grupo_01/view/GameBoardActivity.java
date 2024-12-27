@@ -1,4 +1,4 @@
-package com.game.ed_p1_grupo_01.controller;
+package com.game.ed_p1_grupo_01.view;
 
 import android.os.Bundle;
 
@@ -10,13 +10,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.game.ed_p1_grupo_01.R;
 
-public class ResultActivity extends AppCompatActivity {
+public class GameBoardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_result);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_result), (v, insets) -> {
+        setContentView(R.layout.activity_game_board);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_game_board), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
