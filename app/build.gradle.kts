@@ -8,10 +8,12 @@ android {
 
     defaultConfig {
         applicationId = "com.game.ed_p1_grupo_01"
-        minSdk = 26
+        minSdk = 34
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+        //Para configuraciones de minSDKVersion 20 o menores
+        multiDexEnabled = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -26,13 +28,19 @@ android {
         }
     }
     compileOptions {
+        // Flag para habilitar el soporte de nuevas APIs
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding = true
     }
 }
 
 dependencies {
 
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

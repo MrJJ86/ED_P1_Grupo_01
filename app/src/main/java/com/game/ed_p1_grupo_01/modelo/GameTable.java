@@ -3,6 +3,8 @@ package com.game.ed_p1_grupo_01.modelo;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class GameTable implements Serializable {
@@ -56,6 +58,26 @@ public class GameTable implements Serializable {
 
     public void setTokens(ArrayList<Token> tokens) {
         this.tokens = tokens;
+    }
+
+    public ArrayList<Token> getPlayer1Tokens(){
+        ArrayList<Token> tokens = new ArrayList<>();
+        for(Token t: getTokens()){
+            if(t.isPlayer1()){
+                tokens.add(t);
+            }
+        }
+        return tokens;
+    }
+
+    public ArrayList<Token> getPlayer2Tokens(){
+        ArrayList<Token> tokens = new ArrayList<>();
+        for(Token t: getTokens()){
+            if(!t.isPlayer1()){
+                tokens.add(t);
+            }
+        }
+        return tokens;
     }
 
     private boolean positionIsEmpty(int positionX, int positionY) {
@@ -144,23 +166,38 @@ public class GameTable implements Serializable {
     /**
      * Calcula el valor P (líneas jugables) para un jugador dado.
      *
-     * @param playerToken El token del jugador a evaluar.
+     * @param playerTokens Lista de tokens del jugador a evaluar.
      * @return El número de líneas jugables para el jugador.
      */
-    public int calculateP(Token playerToken) {
+    public int calculateP(ArrayList<Token> playerTokens) {
         int p = 0;
 
         for (int[][] combination : POSITIONS) {
             boolean isPlayable = true;
+            int tokenCapacity = 0;
+
             for (int[] position : combination) {
                 int x = position[0];
                 int y = position[1];
                 Token existingToken = getTokenAtPosition(x, y);
 
-                if (existingToken != null && !existingToken.equals(playerToken)) {
-                    isPlayable = false;
-                    break;
+                if (existingToken != null) {
+                    List<Token> equalTokens =  playerTokens.stream()
+                            .filter((token)->{
+                                return existingToken.equals(token);
+                            })
+                            .toList();
+                    if(equalTokens.isEmpty()){
+                        isPlayable = false;
+                        break;
+                    }
+                    if(equalTokens.size() == 1){
+                        tokenCapacity++;
+                    }
                 }
+            }
+            if(tokenCapacity == 3){
+                isPlayable = false;
             }
             if (isPlayable) {
                 p++;
@@ -172,13 +209,13 @@ public class GameTable implements Serializable {
     /**
      * Calcula la utilidad del tablero (U).
      *
-     * @param playerToken El token del jugador para quien se calcula la utilidad.
-     * @param opponentToken El token del oponente.
+     * @param playerTokens El token del jugador para quien se calcula la utilidad.
+     * @param opponentTokens El token del oponente.
      * @return La utilidad del tablero.
      */
-    public int calculateU(Token playerToken, Token opponentToken) {
-        int pPlayer = calculateP(playerToken);
-        int pOpponent = calculateP(opponentToken);
+    public int calculateU(ArrayList<Token> playerTokens, ArrayList<Token> opponentTokens) {
+        int pPlayer = calculateP(playerTokens);
+        int pOpponent = calculateP(opponentTokens);
         return pPlayer - pOpponent;
     }
 
@@ -197,44 +234,44 @@ public class GameTable implements Serializable {
         }
         return null;
     }
+
     public void computerProcess() {
-        // Verificar si el juego ya terminó
-        if (gameIsEnd()) {
-            return; // Si ya terminó, no hace nada
-        }
+        gameTree = Tree.TreeTable(this);
+        Map<GameTable, Integer> utilityMap = new HashMap<>();
 
-        // Obtener el token de la computadora y del oponente
-        boolean isPlayer1 = !isPlayer1Turn(); // La computadora es el jugador actual
-        Token computerToken = new Token(isPlayer1, -1, -1);
-        Token opponentToken = new Token(!isPlayer1, -1, -1);
+        for(Tree<GameTable> treeTable: gameTree.getRoot().getChildren()){
+            int tableUtility = Integer.MAX_VALUE;
+            for(Tree<GameTable> childTreeTable: treeTable.getRoot().getChildren()){
+                GameTable table = childTreeTable.getRoot().getContent();
 
-        // Variables para guardar el mejor movimiento
-        int bestUtility = Integer.MIN_VALUE ;
-        int[] bestMove = null;
+                //TODO: Modificar el orden de los jugadores
+                ArrayList<Token> computer = table.getPlayer1Tokens();
+                ArrayList<Token> player = table.getPlayer2Tokens();
 
-        // Iterar sobre todas las posiciones disponibles
-        for (int[] position : getAvailablePositions()) {
-            // Clonar el tablero para simular el movimiento
-            GameTable simulatedTable = this.clone();
-            Token simulatedToken = new Token(isPlayer1, position[0], position[1]);
+                int currentUtility = table.calculateU(computer, player);
+                tableUtility = Math.min(currentUtility, tableUtility);
 
-            // Realizar el movimiento simulado
-            if (simulatedTable.setToken(simulatedToken)) {
-                // Calcular la utilidad del tablero resultante
-                int utility = simulatedTable.calculateU(computerToken, opponentToken);
-
-                // Verificar si es el mejor movimiento encontrado
-                if (utility > bestUtility) {
-                    bestUtility = utility;
-                    bestMove = position;
-                }
             }
+            utilityMap.put(treeTable.getRoot().getContent(),tableUtility);
         }
 
-        // Realizar el mejor movimiento en el tablero actual
-        if (bestMove != null) {
-            Token bestToken = new Token(isPlayer1, bestMove[0], bestMove[1]);
-            setToken(bestToken);
+        //Obtener la mayor utilidad
+        Iterator<GameTable> iteratorKey = utilityMap.keySet().iterator();
+        int maxUtility = Integer.MIN_VALUE;
+        while(iteratorKey.hasNext()){
+            int utility = utilityMap.get(iteratorKey.next());
+            maxUtility = Math.max(maxUtility, utility);
+        }
+        //Colocar token con el tablero de mejor utilidad.out.println(nextTable);
+
+        for (GameTable table : utilityMap.keySet()) {
+            int utility = utilityMap.get(table);
+            if(utility == maxUtility){
+                //TODO: Modificar el orden de los jugadores
+                Token nextToken = table.getPlayer1Tokens().get(table.getPlayer1Tokens().size()-1);
+                this.setToken(nextToken);
+                break;
+            }
         }
     }
 
