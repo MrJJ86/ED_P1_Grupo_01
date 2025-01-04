@@ -49,6 +49,12 @@ public class TableOperation {
         return p;
     }
 
+    public int utilidad(int pJugador,int pOponente){
+    //Recibe como parametros los resultados de aplicar la funcion p al tablero actual, con la fincha del jugador 1 y jugador 2
+    return pJugador-pOponente;
+    }
+
+
 
 
 }
