@@ -8,6 +8,15 @@
     android:background="@color/md_theme_background"
     tools:context=".view.MainActivity">
 
+    <!--Imagen de fondo -->
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/fondo"
+        android:scaleType="centerCrop"
+        android:alpha="0.5"/>
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_horizontal_30"
@@ -29,10 +38,13 @@
         android:text="Tres en Raya"
         android:textColor="@color/md_theme_inverseSurface"
         android:textSize="50sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/guide_horizontal_30"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.585" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -52,28 +64,41 @@
             android:background="@drawable/round_shape"
             android:gravity="center"
             android:text="JUGADOR VS PC"
-            android:textColor="@color/md_theme_inverseSurface"
+            android:textColor="@color/md_theme_surfaceContainerLow"
             android:textSize="22sp" />
         <Button
             android:id="@+id/btn_player_vs_player"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/round_shape"
             android:text="JUGADOR VS JUGADOR"
             android:gravity="center"
-            android:textColor="@color/md_theme_inverseSurface"
+            android:textColor="@color/md_theme_surfaceContainerLow"
             android:textSize="22sp"
-            android:background="@color/md_theme_secondaryFixedDim"
             android:layout_marginVertical="20dp"/>
         <Button
             android:id="@+id/btn_pc_vs_pc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
             android:text="PC VS PC"
             android:gravity="center"
-            android:textColor="@color/md_theme_inverseSurface"
+            android:textColor="@color/md_theme_surfaceContainerLow"
             android:textSize="22sp"
-            android:background="@color/md_theme_secondaryFixedDim"/>
+            android:background="@drawable/round_shape"/>
     </LinearLayout>
+
+    <!--Imagen del mini tablero -->
+    <ImageView
+        android:id="@+id/minilog"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_margin="60dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="56dp"
+        android:src="@drawable/tres"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
