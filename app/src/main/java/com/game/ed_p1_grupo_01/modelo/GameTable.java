@@ -6,10 +6,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GameTable implements Serializable {
     private Tree<GameTable> gameTree;
     private ArrayList<Token> tokens;
+    private String player1Symbol = "X"; // Símbolo predeterminado
+    private String player2Symbol = "O"; // Símbolo predeterminado
 
     public static final int[][][] POSITIONS = {
             // Horizontal
@@ -26,8 +29,8 @@ public class GameTable implements Serializable {
     };
 
     public GameTable() {
-        this.gameTree = new Tree<>(this);
         this.tokens = new ArrayList<>();
+        this.gameTree = new Tree<>(this);
     }
 
     public GameTable(ArrayList<Token> tokens) {
@@ -60,24 +63,40 @@ public class GameTable implements Serializable {
         this.tokens = tokens;
     }
 
-    public ArrayList<Token> getPlayer1Tokens(){
+    public ArrayList<Token> getPlayer1Tokens() {
         ArrayList<Token> tokens = new ArrayList<>();
-        for(Token t: getTokens()){
-            if(t.isPlayer1()){
+        for (Token t : getTokens()) {
+            if (t.isPlayer1()) {
                 tokens.add(t);
             }
         }
         return tokens;
     }
 
-    public ArrayList<Token> getPlayer2Tokens(){
+    public ArrayList<Token> getPlayer2Tokens() {
         ArrayList<Token> tokens = new ArrayList<>();
-        for(Token t: getTokens()){
-            if(!t.isPlayer1()){
+        for (Token t : getTokens()) {
+            if (!t.isPlayer1()) {
                 tokens.add(t);
             }
         }
         return tokens;
+    }
+
+    public String getPlayer1Symbol() {
+        return player1Symbol;
+    }
+
+    public void setPlayer1Symbol(String player1Symbol) {
+        this.player1Symbol = player1Symbol;
+    }
+
+    public String getPlayer2Symbol() {
+        return player2Symbol;
+    }
+
+    public void setPlayer2Symbol(String player2Symbol) {
+        this.player2Symbol = player2Symbol;
     }
 
     private boolean positionIsEmpty(int positionX, int positionY) {
@@ -163,12 +182,6 @@ public class GameTable implements Serializable {
         return availablePositions;
     }
 
-    /**
-     * Calcula el valor P (líneas jugables) para un jugador dado.
-     *
-     * @param playerTokens Lista de tokens del jugador a evaluar.
-     * @return El número de líneas jugables para el jugador.
-     */
     public int calculateP(ArrayList<Token> playerTokens) {
         int p = 0;
 
@@ -182,21 +195,19 @@ public class GameTable implements Serializable {
                 Token existingToken = getTokenAtPosition(x, y);
 
                 if (existingToken != null) {
-                    List<Token> equalTokens =  playerTokens.stream()
-                            .filter((token)->{
-                                return existingToken.equals(token);
-                            })
-                            .toList();
-                    if(equalTokens.isEmpty()){
+                    List<Token> equalTokens = playerTokens.stream()
+                            .filter((token) -> existingToken.equals(token))
+                            .collect(Collectors.toList());
+                    if (equalTokens.isEmpty()) {
                         isPlayable = false;
                         break;
                     }
-                    if(equalTokens.size() == 1){
+                    if (equalTokens.size() == 1) {
                         tokenCapacity++;
                     }
                 }
             }
-            if(tokenCapacity == 3){
+            if (tokenCapacity == 3) {
                 isPlayable = false;
             }
             if (isPlayable) {
@@ -206,26 +217,12 @@ public class GameTable implements Serializable {
         return p;
     }
 
-    /**
-     * Calcula la utilidad del tablero (U).
-     *
-     * @param playerTokens El token del jugador para quien se calcula la utilidad.
-     * @param opponentTokens El token del oponente.
-     * @return La utilidad del tablero.
-     */
     public int calculateU(ArrayList<Token> playerTokens, ArrayList<Token> opponentTokens) {
         int pPlayer = calculateP(playerTokens);
         int pOpponent = calculateP(opponentTokens);
         return pPlayer - pOpponent;
     }
 
-    /**
-     * Obtiene el token en una posición específica del tablero.
-     *
-     * @param x Coordenada X.
-     * @param y Coordenada Y.
-     * @return El token encontrado en la posición, o null si está vacía.
-     */
     private Token getTokenAtPosition(int x, int y) {
         for (Token token : tokens) {
             if (token.getPositionX() == x && token.getPositionY() == y) {
@@ -239,12 +236,11 @@ public class GameTable implements Serializable {
         gameTree = Tree.TreeTable(this);
         Map<GameTable, Integer> utilityMap = new HashMap<>();
 
-        for(Tree<GameTable> treeTable: gameTree.getRoot().getChildren()){
+        for (Tree<GameTable> treeTable : gameTree.getRoot().getChildren()) {
             int tableUtility = Integer.MAX_VALUE;
-            for(Tree<GameTable> childTreeTable: treeTable.getRoot().getChildren()){
+            for (Tree<GameTable> childTreeTable : treeTable.getRoot().getChildren()) {
                 GameTable table = childTreeTable.getRoot().getContent();
 
-                //TODO: Modificar el orden de los jugadores
                 ArrayList<Token> computer = table.getPlayer1Tokens();
                 ArrayList<Token> player = table.getPlayer2Tokens();
 
@@ -252,27 +248,23 @@ public class GameTable implements Serializable {
                 tableUtility = Math.min(currentUtility, tableUtility);
 
             }
-            utilityMap.put(treeTable.getRoot().getContent(),tableUtility);
+            utilityMap.put(treeTable.getRoot().getContent(), tableUtility);
         }
 
-        //Obtener la mayor utilidad
         Iterator<GameTable> iteratorKey = utilityMap.keySet().iterator();
         int maxUtility = Integer.MIN_VALUE;
-        while(iteratorKey.hasNext()){
+        while (iteratorKey.hasNext()) {
             int utility = utilityMap.get(iteratorKey.next());
             maxUtility = Math.max(maxUtility, utility);
         }
-        //Colocar token con el tablero de mejor utilidad.out.println(nextTable);
 
         for (GameTable table : utilityMap.keySet()) {
             int utility = utilityMap.get(table);
-            if(utility == maxUtility){
-                //TODO: Modificar el orden de los jugadores
-                Token nextToken = table.getPlayer1Tokens().get(table.getPlayer1Tokens().size()-1);
+            if (utility == maxUtility) {
+                Token nextToken = table.getPlayer1Tokens().get(table.getPlayer1Tokens().size() - 1);
                 this.setToken(nextToken);
                 break;
             }
         }
     }
-
 }
