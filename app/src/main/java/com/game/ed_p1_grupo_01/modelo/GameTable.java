@@ -1,5 +1,7 @@
 package com.game.ed_p1_grupo_01.modelo;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -235,44 +237,68 @@ public class GameTable implements Serializable {
         return null;
     }
 
-    public void computerProcess() {
-        gameTree = Tree.TreeTable(this);
-        Map<GameTable, Integer> utilityMap = new HashMap<>();
+    public Map<GameTable, Integer> computerProcess(boolean isComputerFirst) {
+        gameTree = Tree.TreeTable(this.clone());
+        Map<GameTable, Integer> firstChildrenUtilityMap = new HashMap<>();
+        Map<GameTable, Integer> treeUtilityMap = new HashMap<>();
 
         for(Tree<GameTable> treeTable: gameTree.getRoot().getChildren()){
             int tableUtility = Integer.MAX_VALUE;
             for(Tree<GameTable> childTreeTable: treeTable.getRoot().getChildren()){
                 GameTable table = childTreeTable.getRoot().getContent();
 
-                //TODO: Modificar el orden de los jugadores
-                ArrayList<Token> computer = table.getPlayer1Tokens();
-                ArrayList<Token> player = table.getPlayer2Tokens();
+                ArrayList<Token> computer;
+                ArrayList<Token> player;
+                int currentUtility;
 
-                int currentUtility = table.calculateU(computer, player);
+                if(isComputerFirst){
+                    computer = table.getPlayer1Tokens();
+                    player = table.getPlayer2Tokens();
+                    currentUtility = table.calculateU(computer, player);
+                }else{
+                    computer = table.getPlayer2Tokens();
+                    player = table.getPlayer1Tokens();
+                    currentUtility = table.calculateU(player, computer);
+                }
+                treeUtilityMap.put(table, currentUtility);
                 tableUtility = Math.min(currentUtility, tableUtility);
 
             }
-            utilityMap.put(treeTable.getRoot().getContent(),tableUtility);
+            firstChildrenUtilityMap.put(treeTable.getRoot().getContent(),tableUtility);
         }
+        treeUtilityMap.putAll(firstChildrenUtilityMap);
 
         //Obtener la mayor utilidad
-        Iterator<GameTable> iteratorKey = utilityMap.keySet().iterator();
+        Iterator<GameTable> iteratorKey = firstChildrenUtilityMap.keySet().iterator();
         int maxUtility = Integer.MIN_VALUE;
         while(iteratorKey.hasNext()){
-            int utility = utilityMap.get(iteratorKey.next());
+            int utility = firstChildrenUtilityMap.get(iteratorKey.next());
             maxUtility = Math.max(maxUtility, utility);
         }
-        //Colocar token con el tablero de mejor utilidad.out.println(nextTable);
+        //Colocar token con el tablero de mejor utilidad
 
-        for (GameTable table : utilityMap.keySet()) {
-            int utility = utilityMap.get(table);
+        for (GameTable table : firstChildrenUtilityMap.keySet()) {
+            int utility = firstChildrenUtilityMap.get(table);
             if(utility == maxUtility){
-                //TODO: Modificar el orden de los jugadores
-                Token nextToken = table.getPlayer1Tokens().get(table.getPlayer1Tokens().size()-1);
+                //Siguiente Token que depende del turno del computador
+                Token nextToken;
+                if(isComputerFirst){
+                    nextToken = table.getPlayer1Tokens().get(table.getPlayer1Tokens().size()-1);
+                }else{
+                    nextToken = table.getPlayer2Tokens().get(table.getPlayer2Tokens().size()-1);
+                }
                 this.setToken(nextToken);
                 break;
             }
         }
+        return treeUtilityMap;
     }
 
+    @Override
+    public String toString() {
+        return "GameTable{" +
+                "gameTree=" + gameTree +
+                ", tokens=" + tokens +
+                '}';
+    }
 }
