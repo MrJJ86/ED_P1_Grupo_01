@@ -25,7 +25,6 @@
         <activity android:name=".view.ConfigActivity" />
         <activity android:name=".view.GameBoardActivity"/>
         <activity android:name=".view.TreeVisualizationActivity"/>
-        <activity android:name=".view.TableTemplateActivity"/>
 
     </application>
 
