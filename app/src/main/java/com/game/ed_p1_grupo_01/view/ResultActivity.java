@@ -1,25 +1,54 @@
 package com.game.ed_p1_grupo_01.view;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.game.ed_p1_grupo_01.R;
 
+/**
+ * Activity para mostrar el resultado del juego.
+ */
 public class ResultActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_result);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_result), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        // Obtener referencias a los elementos de la interfaz
+        TextView tvResultMessage = findViewById(R.id.tv_result_message);
+        Button btnMainMenu = findViewById(R.id.btn_main_menu);
+        Button btnPlayAgain = findViewById(R.id.btn_play_again);
+
+        // Recuperar el resultado del Intent
+        String winner = getIntent().getStringExtra("WINNER");
+
+        // Mostrar el mensaje adecuado según el resultado
+        if (winner != null) {
+            if (winner.equals("DRAW")) {
+                tvResultMessage.setText("¡Es un empate!");
+            } else {
+                tvResultMessage.setText("¡Ganó " + winner + "!");
+            }
+        }
+
+        // Configurar el botón "Volver al Menú Principal"
+        btnMainMenu.setOnClickListener(view -> {
+            Intent intent = new Intent(ResultActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        });
+
+        // Configurar el botón "Jugar de Nuevo"
+        btnPlayAgain.setOnClickListener(view -> {
+            Intent intent = new Intent(ResultActivity.this, GameBoardActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 }

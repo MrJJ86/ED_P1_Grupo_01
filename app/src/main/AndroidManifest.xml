@@ -23,7 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.ConfigActivity" />
-        <activity android:name=".view.GameBoardActivity"/>
+        <activity android:name=".view.GameBoardActivity" />
+        <activity android:name=".view.ResultActivity" />
         <activity android:name=".view.TreeVisualizationActivity"/>
 
     </application>

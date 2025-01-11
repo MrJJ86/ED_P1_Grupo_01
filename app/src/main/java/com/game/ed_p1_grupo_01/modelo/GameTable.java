@@ -1,17 +1,18 @@
 package com.game.ed_p1_grupo_01.modelo;
 
-
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GameTable implements Serializable {
     private Tree<GameTable> gameTree;
     private ArrayList<Token> tokens;
+    private String player1Symbol = "X"; // Símbolo predeterminado
+    private String player2Symbol = "O"; // Símbolo predeterminado
 
     public static final int[][][] POSITIONS = {
             // Horizontal
@@ -28,8 +29,8 @@ public class GameTable implements Serializable {
     };
 
     public GameTable() {
-        this.gameTree = new Tree<>(this);
         this.tokens = new ArrayList<>();
+        this.gameTree = new Tree<>(this);
     }
 
     public GameTable(ArrayList<Token> tokens) {
@@ -62,24 +63,40 @@ public class GameTable implements Serializable {
         this.tokens = tokens;
     }
 
-    public ArrayList<Token> getPlayer1Tokens(){
+    public ArrayList<Token> getPlayer1Tokens() {
         ArrayList<Token> tokens = new ArrayList<>();
-        for(Token t: getTokens()){
-            if(t.isPlayer1()){
+        for (Token t : getTokens()) {
+            if (t.isPlayer1()) {
                 tokens.add(t);
             }
         }
         return tokens;
     }
 
-    public ArrayList<Token> getPlayer2Tokens(){
+    public ArrayList<Token> getPlayer2Tokens() {
         ArrayList<Token> tokens = new ArrayList<>();
-        for(Token t: getTokens()){
-            if(!t.isPlayer1()){
+        for (Token t : getTokens()) {
+            if (!t.isPlayer1()) {
                 tokens.add(t);
             }
         }
         return tokens;
+    }
+
+    public String getPlayer1Symbol() {
+        return player1Symbol;
+    }
+
+    public void setPlayer1Symbol(String player1Symbol) {
+        this.player1Symbol = player1Symbol;
+    }
+
+    public String getPlayer2Symbol() {
+        return player2Symbol;
+    }
+
+    public void setPlayer2Symbol(String player2Symbol) {
+        this.player2Symbol = player2Symbol;
     }
 
     private boolean positionIsEmpty(int positionX, int positionY) {
@@ -184,21 +201,19 @@ public class GameTable implements Serializable {
                 Token existingToken = getTokenAtPosition(x, y);
 
                 if (existingToken != null) {
-                    List<Token> equalTokens =  playerTokens.stream()
-                            .filter((token)->{
-                                return existingToken.equals(token);
-                            })
-                            .toList();
-                    if(equalTokens.isEmpty()){
+                    List<Token> equalTokens = playerTokens.stream()
+                            .filter((token) -> existingToken.equals(token))
+                            .collect(Collectors.toList());
+                    if (equalTokens.isEmpty()) {
                         isPlayable = false;
                         break;
                     }
-                    if(equalTokens.size() == 1){
+                    if (equalTokens.size() == 1) {
                         tokenCapacity++;
                     }
                 }
             }
-            if(tokenCapacity == 3){
+            if (tokenCapacity == 3) {
                 isPlayable = false;
             }
             if (isPlayable) {
@@ -242,9 +257,9 @@ public class GameTable implements Serializable {
         Map<GameTable, Integer> firstChildrenUtilityMap = new HashMap<>();
         Map<GameTable, Integer> treeUtilityMap = new HashMap<>();
 
-        for(Tree<GameTable> treeTable: gameTree.getRoot().getChildren()){
+        for (Tree<GameTable> treeTable : gameTree.getRoot().getChildren()) {
             int tableUtility = Integer.MAX_VALUE;
-            for(Tree<GameTable> childTreeTable: treeTable.getRoot().getChildren()){
+            for (Tree<GameTable> childTreeTable : treeTable.getRoot().getChildren()) {
                 GameTable table = childTreeTable.getRoot().getContent();
 
                 ArrayList<Token> computer;
