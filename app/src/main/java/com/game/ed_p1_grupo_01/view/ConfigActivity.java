@@ -2,6 +2,7 @@ package com.game.ed_p1_grupo_01.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -71,6 +72,8 @@ public class ConfigActivity extends AppCompatActivity {
             // Obtener configuraciones seleccionadas
             String selectedSymbol = rbSymbolX.isChecked() ? "X" : "O";
             String startingPlayer = rbPlayer1.isChecked() ? "PLAYER_1" : "PLAYER_2";
+            Log.i("parametros", "player: " + startingPlayer);
+
 
             // Pasar configuraciones a GameBoardActivity
             Intent intent = new Intent(ConfigActivity.this, GameBoardActivity.class);

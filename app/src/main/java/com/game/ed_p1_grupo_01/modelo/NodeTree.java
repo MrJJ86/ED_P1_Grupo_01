@@ -1,8 +1,9 @@
 package com.game.ed_p1_grupo_01.modelo;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class NodeTree<E> {
+public class NodeTree<E> implements Serializable {
     private E content;
     private LinkedList<Tree<E>> children;
 

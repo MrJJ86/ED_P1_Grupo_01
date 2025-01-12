@@ -1,5 +1,12 @@
 package com.game.ed_p1_grupo_01.modelo;
 
+import android.util.Log;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +20,7 @@ public class GameTable implements Serializable {
     private ArrayList<Token> tokens;
     private String player1Symbol = "X"; // Símbolo predeterminado
     private String player2Symbol = "O"; // Símbolo predeterminado
+    public static final String nameFile = "GameTable.ser";
 
     public static final int[][][] POSITIONS = {
             // Horizontal
@@ -156,6 +164,9 @@ public class GameTable implements Serializable {
     }
 
     public boolean isPlayer1Turn() {
+
+        if(tokens.isEmpty()) return true;
+
         int player1Tokens = 0;
         int player2Tokens = 0;
 
@@ -252,10 +263,10 @@ public class GameTable implements Serializable {
         return null;
     }
 
-    public Map<GameTable, Integer> computerProcess(boolean isComputerFirst) {
+    public HashMap<GameTable, Integer> computerProcess(boolean isComputerFirst) {
         gameTree = Tree.TreeTable(this.clone());
         Map<GameTable, Integer> firstChildrenUtilityMap = new HashMap<>();
-        Map<GameTable, Integer> treeUtilityMap = new HashMap<>();
+        HashMap<GameTable, Integer> treeUtilityMap = new HashMap<>();
 
         for (Tree<GameTable> treeTable : gameTree.getRoot().getChildren()) {
             int tableUtility = Integer.MAX_VALUE;
@@ -315,5 +326,48 @@ public class GameTable implements Serializable {
                 "gameTree=" + gameTree +
                 ", tokens=" + tokens +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GameTable gameTable = (GameTable) o;
+        return tokens.equals(gameTable.tokens) && player1Symbol.equals(gameTable.player1Symbol) && player2Symbol.equals(gameTable.player2Symbol);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = tokens.hashCode();
+        result = 31 * result + player1Symbol.hashCode();
+        result = 31 * result + player2Symbol.hashCode();
+        return result;
+    }
+
+    public static GameTable loadTable(File directory){
+        GameTable table = null;
+        File file = new File(directory, nameFile);
+        if(file.exists()){
+            try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(file))){
+                table = (GameTable) is.readObject();
+            }catch (Exception e){
+                Log.e("Table", "loadTable: " + e.getMessage());
+            }
+        }
+        return table;
+    }
+
+    public static boolean saveTable(File directory, GameTable table){
+        File file = new File(directory, nameFile);
+        if(file.exists()){
+            try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(file))){
+                os.writeObject(table);
+                return true;
+            }catch(Exception e){
+                Log.e("Table", "saveTable: " + e.getMessage());
+            }
+        }
+        return false;
     }
 }

@@ -2,7 +2,9 @@ package com.game.ed_p1_grupo_01.view;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -38,7 +40,7 @@ public class TreeVisualizationActivity extends AppCompatActivity {
     //TODO: Eliminar este variable cuando se tenga el tablero actual correctamente
     boolean isComputerFirst;
     GameTable table;
-    Map<GameTable, Integer> utilityTree;
+    HashMap<GameTable, Integer> utilityTree;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,10 @@ public class TreeVisualizationActivity extends AppCompatActivity {
             return insets;
         });
         isComputerFirst = true;
+        table = getIntent().getExtras().getSerializable("table", GameTable.class);
+        Log.i("Table", "onCreate: " + table);
+        utilityTree = (HashMap<GameTable, Integer>) getIntent().getExtras().getSerializable("utility", HashMap.class);
+        Log.i("Table", "onCreate: " + utilityTree);
         generateTreeTable();
     }
 
@@ -100,10 +106,6 @@ public class TreeVisualizationActivity extends AppCompatActivity {
 
     private void generateTreeTable(){
 
-        //TODO: Reemplazar lineas de prueba
-        GameTable table = new GameTable();
-        Map<GameTable, Integer> utilityTree = table.computerProcess(isComputerFirst);
-        //------------------------
         Tree<GameTable> treeTable = table.getGameTree();
 
         //Guides
@@ -137,7 +139,17 @@ public class TreeVisualizationActivity extends AppCompatActivity {
         containerFirstLevel.setOrientation(LinearLayout.HORIZONTAL);
         containerFirstLevel.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         containerFirstLevel.setPadding(5,5,5,5);
-        containerFirstLevel.setDividerDrawable(AppCompatResources.getDrawable(containerRoot.getContext(), R.drawable.spacer_extra_larger));
+        int listChildrenSize = treeTable.getRoot().getChildren().size();
+        int divider = R.drawable.spacer_large;
+
+        if(listChildrenSize < 6){
+            divider = R.drawable.spacer_large_6;
+        }else if(listChildrenSize < 9){
+            divider = R.drawable.spacer_large_8;
+        }else if(listChildrenSize == 9){
+            divider = R.drawable.spacer_extra_larger;
+        }
+        containerFirstLevel.setDividerDrawable(AppCompatResources.getDrawable(containerRoot.getContext(), divider));
         containerFirstLevel.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
 
         //Contenedor para los contenedores de las tablas del segundo nivel
@@ -243,18 +255,25 @@ public class TreeVisualizationActivity extends AppCompatActivity {
         positionsMap.put("2,2", container.findViewWithTag(21));
 
         // Se agrega la imagen
-        for(String keyRTMap: tokenMap.keySet()){
-            CardView card = positionsMap.get(keyRTMap);
+        for(String keyTMap: tokenMap.keySet()){
+            CardView card = positionsMap.get(keyTMap);
             if(card != null){
-                Token token = tokenMap.get(keyRTMap);
+                Token token = tokenMap.get(keyTMap);
                 ImageView image = new ImageView(card.getContext());
                 image.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 //TODO: Colocar una mejor condicion con los datos de configActivity
                 if(token.isPlayer1()){
-                    //TODO: Cambiar imagenes
-                    image.setImageResource(R.drawable.download);
+                    if(table.getPlayer1Symbol().equalsIgnoreCase("X")){
+                        image.setImageResource(R.drawable.cross);
+                    }else{
+                        image.setImageResource(R.drawable.circle);
+                    }
                 }else{
-                    image.setImageResource(R.drawable.round_shape);
+                    if(table.getPlayer2Symbol().equalsIgnoreCase("X")){
+                        image.setImageResource(R.drawable.cross);
+                    }else{
+                        image.setImageResource(R.drawable.circle);
+                    }
                 }
                 card.addView(image);
             }
