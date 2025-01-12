@@ -18,7 +18,6 @@ import java.util.ArrayList;
  * Activity para manejar la lógica y la interfaz del tablero de juego.
  */
 public class GameBoardActivity extends AppCompatActivity {
-
     private Button[][] boardButtons; // Botones del tablero 3x3
     private GameTable gameTable; // Modelo lógico del tablero
     private TextView tvTurnIndicator; // Indicador de turno
@@ -109,9 +108,45 @@ public class GameBoardActivity extends AppCompatActivity {
      * Configura los listeners para los botones del tablero.
      */
     private void setUpBoardListeners(boolean player1Start) {
-        if(!player1Start){
-            gameTable.computerProcess();
+        if(!player1Start && gameMode.equals("PLAYER_VS_PC")){
+            gameTable.computerProcess(false);
             updateBoardFromLogic();
+            gameTable.player1Start=false;//Cambia el valor por default de player1Start para que el metodo de player1turn cambie su return
+        }
+        //Lo manejo fuera del setOnClickListener, porque el usuario no deberia hacer clic en nada
+        if (gameMode.equals("PC_VS_PC")) {
+            new Thread(() -> {
+                while (!gameTable.gameIsEnd()) {
+                    runOnUiThread(() -> {
+                        if (gameTable.isPlayer1Turn()) {
+                            tvTurnIndicator.setText("Turno: PC 1");
+                            gameTable.computerProcess(true); // Como envio true al metodo, la compu asume que ella es la player1
+                            updateBoardFromLogic();
+
+                            if (gameTable.gameIsEnd()) {
+                                endGame();
+                                return;
+                            }
+
+                        } else {
+                            tvTurnIndicator.setText("Turno: PC 2");
+                            gameTable.computerProcess(false); //Al enviar false la computadora sabe que es la player2
+                            updateBoardFromLogic();
+
+                            if (gameTable.gameIsEnd()) {//Comprueba si se acabo el juego
+                                endGame();
+                                return;
+                            }
+                        }
+                    });
+
+                    try {//Hago esto para que el juego no se acabe automaticamente, sino que haya un tiempo entre cada movimiento
+                        Thread.sleep(2000); //En este caso 2segundos
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
 
         for (int i = 0; i < 3; i++) {
@@ -148,13 +183,8 @@ public class GameBoardActivity extends AppCompatActivity {
 
         // Lógica para los modos de juego
         if (gameMode.equals("PLAYER_VS_PC") && !gameTable.isPlayer1Turn()) {
-            gameTable.computerProcess();
+            gameTable.computerProcess(false);
             updateBoardFromLogic();
-        } else if (gameMode.equals("PC_VS_PC")) {
-            while (!gameTable.isPlayer1Turn() && !gameTable.gameIsEnd()) {
-                gameTable.computerProcess();
-                updateBoardFromLogic();
-            }
         }
 
         // Actualizar el indicador de turno

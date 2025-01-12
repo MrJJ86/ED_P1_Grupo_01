@@ -14,6 +14,8 @@ public class GameTable implements Serializable {
     private String player1Symbol = "X"; // Símbolo predeterminado
     private String player2Symbol = "O"; // Símbolo predeterminado
 
+    public boolean player1Start=true;
+
     public static final int[][][] POSITIONS = {
             // Horizontal
             {{0, 0}, {0, 1}, {0, 2}},
@@ -166,8 +168,10 @@ public class GameTable implements Serializable {
                 player2Tokens++;
             }
         }
-
+        if (!player1Start)
+            return player1Tokens < player2Tokens;
         return player1Tokens <= player2Tokens;
+
     }
 
     public ArrayList<int[]> getAvailablePositions() {
@@ -232,7 +236,7 @@ public class GameTable implements Serializable {
         return null;
     }
 
-    public void computerProcess() {
+    public void computerProcess(boolean isplayer1) {
         gameTree = Tree.TreeTable(this);
         Map<GameTable, Integer> utilityMap = new HashMap<>();
 
@@ -274,10 +278,8 @@ public class GameTable implements Serializable {
                     if (x != -1 && y != -1) break;
                 }
 
-                Token nextToken = new Token(false, x, y);
-
+                Token nextToken = new Token(isplayer1, x, y);
                 table.setToken(nextToken);
-
                 this.setToken(nextToken);
                 break;
             }
