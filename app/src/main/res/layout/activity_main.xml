@@ -13,7 +13,7 @@
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/fondo"
+        android:src="@drawable/fondo2"
         android:scaleType="centerCrop"
         android:alpha="0.5"/>
 

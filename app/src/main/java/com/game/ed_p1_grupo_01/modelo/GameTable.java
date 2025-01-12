@@ -1,12 +1,5 @@
 package com.game.ed_p1_grupo_01.modelo;
 
-import android.util.Log;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +13,6 @@ public class GameTable implements Serializable {
     private ArrayList<Token> tokens;
     private String player1Symbol = "X"; // Símbolo predeterminado
     private String player2Symbol = "O"; // Símbolo predeterminado
-    public static final String nameFile = "GameTable.ser";
 
     public static final int[][][] POSITIONS = {
             // Horizontal
@@ -164,9 +156,6 @@ public class GameTable implements Serializable {
     }
 
     public boolean isPlayer1Turn() {
-
-        if(tokens.isEmpty()) return true;
-
         int player1Tokens = 0;
         int player2Tokens = 0;
 
@@ -193,12 +182,6 @@ public class GameTable implements Serializable {
         return availablePositions;
     }
 
-    /**
-     * Calcula el valor P (líneas jugables) para un jugador dado.
-     *
-     * @param playerTokens Lista de tokens del jugador a evaluar.
-     * @return El número de líneas jugables para el jugador.
-     */
     public int calculateP(ArrayList<Token> playerTokens) {
         int p = 0;
 
@@ -234,26 +217,12 @@ public class GameTable implements Serializable {
         return p;
     }
 
-    /**
-     * Calcula la utilidad del tablero (U).
-     *
-     * @param playerTokens El token del jugador para quien se calcula la utilidad.
-     * @param opponentTokens El token del oponente.
-     * @return La utilidad del tablero.
-     */
     public int calculateU(ArrayList<Token> playerTokens, ArrayList<Token> opponentTokens) {
         int pPlayer = calculateP(playerTokens);
         int pOpponent = calculateP(opponentTokens);
         return pPlayer - pOpponent;
     }
 
-    /**
-     * Obtiene el token en una posición específica del tablero.
-     *
-     * @param x Coordenada X.
-     * @param y Coordenada Y.
-     * @return El token encontrado en la posición, o null si está vacía.
-     */
     private Token getTokenAtPosition(int x, int y) {
         for (Token token : tokens) {
             if (token.getPositionX() == x && token.getPositionY() == y) {
@@ -263,109 +232,62 @@ public class GameTable implements Serializable {
         return null;
     }
 
-    public HashMap<GameTable, Integer> computerProcess(boolean isComputerFirst) {
-        gameTree = Tree.TreeTable(this.clone());
-        Map<GameTable, Integer> firstChildrenUtilityMap = new HashMap<>();
-        HashMap<GameTable, Integer> treeUtilityMap = new HashMap<>();
+    public void computerProcess() {
+        gameTree = Tree.TreeTable(this);
+        Map<GameTable, Integer> utilityMap = new HashMap<>();
 
         for (Tree<GameTable> treeTable : gameTree.getRoot().getChildren()) {
             int tableUtility = Integer.MAX_VALUE;
             for (Tree<GameTable> childTreeTable : treeTable.getRoot().getChildren()) {
                 GameTable table = childTreeTable.getRoot().getContent();
 
-                ArrayList<Token> computer;
-                ArrayList<Token> player;
-                int currentUtility;
+                ArrayList<Token> computer = table.getPlayer1Tokens();
+                ArrayList<Token> player = table.getPlayer2Tokens();
 
-                if(isComputerFirst){
-                    computer = table.getPlayer1Tokens();
-                    player = table.getPlayer2Tokens();
-                    currentUtility = table.calculateU(computer, player);
-                }else{
-                    computer = table.getPlayer2Tokens();
-                    player = table.getPlayer1Tokens();
-                    currentUtility = table.calculateU(player, computer);
-                }
-                treeUtilityMap.put(table, currentUtility);
+                int currentUtility = table.calculateU(computer, player);
                 tableUtility = Math.min(currentUtility, tableUtility);
 
             }
-            firstChildrenUtilityMap.put(treeTable.getRoot().getContent(),tableUtility);
+            utilityMap.put(treeTable.getRoot().getContent(), tableUtility);
         }
-        treeUtilityMap.putAll(firstChildrenUtilityMap);
 
-        //Obtener la mayor utilidad
-        Iterator<GameTable> iteratorKey = firstChildrenUtilityMap.keySet().iterator();
+        Iterator<GameTable> iteratorKey = utilityMap.keySet().iterator();
         int maxUtility = Integer.MIN_VALUE;
-        while(iteratorKey.hasNext()){
-            int utility = firstChildrenUtilityMap.get(iteratorKey.next());
+        while (iteratorKey.hasNext()) {
+            int utility = utilityMap.get(iteratorKey.next());
             maxUtility = Math.max(maxUtility, utility);
         }
-        //Colocar token con el tablero de mejor utilidad
 
-        for (GameTable table : firstChildrenUtilityMap.keySet()) {
-            int utility = firstChildrenUtilityMap.get(table);
-            if(utility == maxUtility){
-                //Siguiente Token que depende del turno del computador
-                Token nextToken;
-                if(isComputerFirst){
-                    nextToken = table.getPlayer1Tokens().get(table.getPlayer1Tokens().size()-1);
-                }else{
-                    nextToken = table.getPlayer2Tokens().get(table.getPlayer2Tokens().size()-1);
+        for (GameTable table : utilityMap.keySet()) {
+            int utility = utilityMap.get(table);
+            if (utility == maxUtility) {
+                int x = -1, y = -1;
+
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        if (!estaOcupado(table, i, j)) {
+                            x = i;
+                            y = j;
+                            break;
+                        }
+                    }
+                    if (x != -1 && y != -1) break;
                 }
+
+                Token nextToken = new Token(false, x, y);
+
+                table.setToken(nextToken);
+
                 this.setToken(nextToken);
                 break;
             }
         }
-        return treeUtilityMap;
     }
 
-    @Override
-    public String toString() {
-        return "GameTable{" +
-                "gameTree=" + gameTree +
-                ", tokens=" + tokens +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        GameTable gameTable = (GameTable) o;
-        return tokens.equals(gameTable.tokens) && player1Symbol.equals(gameTable.player1Symbol) && player2Symbol.equals(gameTable.player2Symbol);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = tokens.hashCode();
-        result = 31 * result + player1Symbol.hashCode();
-        result = 31 * result + player2Symbol.hashCode();
-        return result;
-    }
-
-    public static GameTable loadTable(File directory){
-        GameTable table = null;
-        File file = new File(directory, nameFile);
-        if(file.exists()){
-            try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(file))){
-                table = (GameTable) is.readObject();
-            }catch (Exception e){
-                Log.e("Table", "loadTable: " + e.getMessage());
-            }
-        }
-        return table;
-    }
-
-    public static boolean saveTable(File directory, GameTable table){
-        File file = new File(directory, nameFile);
-        if(file.exists()){
-            try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(file))){
-                os.writeObject(table);
+    private boolean estaOcupado(GameTable table, int x, int y) {
+        for (Token token : table.getTokens()) {
+            if (token.getPositionX() == x && token.getPositionY() == y) {
                 return true;
-            }catch(Exception e){
-                Log.e("Table", "saveTable: " + e.getMessage());
             }
         }
         return false;

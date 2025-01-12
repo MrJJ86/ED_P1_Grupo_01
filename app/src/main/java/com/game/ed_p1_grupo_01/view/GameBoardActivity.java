@@ -2,7 +2,6 @@ package com.game.ed_p1_grupo_01.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -13,11 +12,7 @@ import com.game.ed_p1_grupo_01.R;
 import com.game.ed_p1_grupo_01.modelo.GameTable;
 import com.game.ed_p1_grupo_01.modelo.Token;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Activity para manejar la lógica y la interfaz del tablero de juego.
@@ -28,8 +23,6 @@ public class GameBoardActivity extends AppCompatActivity {
     private GameTable gameTable; // Modelo lógico del tablero
     private TextView tvTurnIndicator; // Indicador de turno
     private String gameMode; // Modo de juego (PLAYER_VS_PC, PLAYER_VS_PLAYER, PC_VS_PC)
-    boolean player1Starts;
-    HashMap<GameTable, Integer> utilityTree;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,21 +41,11 @@ public class GameBoardActivity extends AppCompatActivity {
         String symbol = getIntent().getStringExtra("SYMBOL");
 
         // Configurar quién inicia el juego
-        player1Starts = "PLAYER_1".equalsIgnoreCase(startingPlayer);
-        Log.i("parametros", "player: " + player1Starts);
+        boolean player1Starts = "PLAYER_1".equals(startingPlayer);
         configureStartingPlayer(player1Starts, symbol);
 
         // Configurar listeners para los botones del tablero
-        setUpBoardListeners();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(!player1Starts){
-            utilityTree = gameTable.computerProcess(!player1Starts);
-            updateBoardFromLogic();
-        }
+        setUpBoardListeners(player1Starts);
     }
 
     /**
@@ -80,8 +63,6 @@ public class GameBoardActivity extends AppCompatActivity {
         // Botón para visualizar los árboles (implementación futura)
         btnViewTrees.setOnClickListener(view -> {
             Intent intent = new Intent(GameBoardActivity.this, TreeVisualizationActivity.class);
-            intent.putExtra("table", gameTable);
-            intent.putExtra("utility",utilityTree);
             startActivity(intent);
         });
 
@@ -127,11 +108,17 @@ public class GameBoardActivity extends AppCompatActivity {
     /**
      * Configura los listeners para los botones del tablero.
      */
-    private void setUpBoardListeners() {
+    private void setUpBoardListeners(boolean player1Start) {
+        if(!player1Start){
+            gameTable.computerProcess();
+            updateBoardFromLogic();
+        }
+
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 final int x = i;
                 final int y = j;
+
                 boardButtons[x][y].setOnClickListener(view -> handleCellClick(x, y));
             }
         }
@@ -160,13 +147,12 @@ public class GameBoardActivity extends AppCompatActivity {
         }
 
         // Lógica para los modos de juego
-        if (gameMode.equals("PLAYER_VS_PC") && !isPlayer1Turn) {
-            utilityTree = gameTable.computerProcess(!player1Starts);
+        if (gameMode.equals("PLAYER_VS_PC") && !gameTable.isPlayer1Turn()) {
+            gameTable.computerProcess();
             updateBoardFromLogic();
         } else if (gameMode.equals("PC_VS_PC")) {
             while (!gameTable.isPlayer1Turn() && !gameTable.gameIsEnd()) {
-                //TODO:REVISAR
-                utilityTree = gameTable.computerProcess(!player1Starts);
+                gameTable.computerProcess();
                 updateBoardFromLogic();
             }
         }
