@@ -1,5 +1,7 @@
 package com.game.ed_p1_grupo_01.modelo;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 

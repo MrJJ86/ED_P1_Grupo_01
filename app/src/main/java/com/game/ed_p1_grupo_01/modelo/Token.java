@@ -44,6 +44,15 @@ public class Token implements Serializable, Comparable<Token> {
     }
 
     @Override
+    public String toString() {
+        return "Token{" +
+                "isPlayer1=" + isPlayer1 +
+                ", positionX=" + positionX +
+                ", positionY=" + positionY +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
