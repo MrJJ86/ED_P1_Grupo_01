@@ -6,9 +6,22 @@
     android:id="@+id/activity_config"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     android:background="@color/md_theme_background"
-    tools:context="com.game.ed_p1_grupo_01.controller.ConfigActivity">
+    tools:context="com.game.ed_p1_grupo_01.view.ConfigActivity">
+
+    <!--Imagen de fondo -->
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/fondoalt2"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:alpha="0.5" />
+
 
     <!-- Botón de regreso más grande y correctamente restringido -->
 
@@ -31,8 +44,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="Configuración del Juego"
-        android:textColor="@color/md_theme_primary"
+        android:textColor="@color/md_theme_onBackground"
         android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_back" />
@@ -43,12 +57,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Símbolo del Jugador"
-        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textSize="25sp"
         android:textColor="@color/md_theme_onBackground"
         app:layout_constraintTop_toBottomOf="@id/tv_config_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="65dp" />
+
 
     <RadioGroup
         android:id="@+id/rg_symbols"
@@ -63,13 +79,17 @@
             android:id="@+id/rb_symbol_x"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:text="X"
+            android:textSize="20sp"
             android:textColor="@color/md_theme_onBackground" />
         <RadioButton
             android:id="@+id/rb_symbol_o"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:text="O"
+            android:textSize="20sp"
             android:textColor="@color/md_theme_onBackground" />
     </RadioGroup>
 
@@ -79,7 +99,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="¿Quién inicia el juego?"
-        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textSize="25sp"
         android:textColor="@color/md_theme_onBackground"
         app:layout_constraintTop_toBottomOf="@id/rg_symbols"
         app:layout_constraintStart_toStartOf="parent"
@@ -100,12 +121,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Jugador 1"
+            android:textSize="20sp"
             android:textColor="@color/md_theme_onBackground" />
         <RadioButton
             android:id="@+id/rb_computer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Computadora"
+            android:textSize="20sp"
             android:textColor="@color/md_theme_onBackground" />
     </RadioGroup>
 
@@ -114,13 +137,14 @@
         android:id="@+id/btn_start_game"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Iniciar Juego"
+        android:layout_marginTop="40dp"
         android:background="@drawable/round_shape"
-        android:textColor="@color/md_theme_inverseSurface"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/rg_starting_player"
-        app:layout_constraintStart_toStartOf="parent"
+        android:padding="15dp"
+        android:text="Iniciar Juego"
+        android:textColor="@color/md_theme_surfaceContainerLow"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="40dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rg_starting_player" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
