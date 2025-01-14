@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_game_board"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/md_theme_secondaryContainer"
     android:padding="16dp"
-    android:background="@color/md_theme_background"
     tools:context="com.game.ed_p1_grupo_01.view.GameBoardActivity">
 
     <!-- Botón de regreso -->
@@ -15,13 +14,14 @@
         android:id="@+id/btn_back"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/baseline_arrow_back_24"
-        android:contentDescription="Regresar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp" />
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Regresar"
+        android:src="@drawable/baseline_arrow_back_24"
+        app:chainUseRtl="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Botón para visualizar los árboles -->
 
@@ -36,34 +36,36 @@
         android:background="@drawable/round_shape"
         android:contentDescription="Ver Árboles"
         android:src="@drawable/baseline_account_tree_24"
-        app:layout_constraintStart_toEndOf="@id/btn_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_turn_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:text="Turno: Jugador X"
-        android:textSize="20sp"
         android:textColor="@color/md_theme_primary"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Tablero de 3x3 -->
     <GridLayout
         android:id="@+id/grid_board"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="40dp"
         android:layout_marginBottom="20dp"
-        android:rowCount="3"
         android:columnCount="3"
-        app:layout_constraintTop_toBottomOf="@id/tv_turn_indicator"
-        app:layout_constraintStart_toStartOf="parent"
+        android:rowCount="3"
+        app:layout_constraintBottom_toTopOf="@id/btn_restart_game"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btn_restart_game">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_turn_indicator">
 
         <!-- Fila 1 -->
         <Button
@@ -72,27 +74,29 @@
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:textSize="24sp"
-            android:textColor="@color/md_theme_primary"
-            android:background="@drawable/round_shape" />
+            android:background="@drawable/button_table_background"
+            android:textColor="@color/md_theme_onBackground_highContrast"
+            android:textSize="24sp" />
+
         <Button
             android:id="@+id/btn_cell_01"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:textSize="24sp"
-            android:textColor="@color/md_theme_primary"
-            android:background="@drawable/round_shape" />
+            android:background="@drawable/button_table_background"
+            android:textColor="@color/md_theme_onBackground_highContrast"
+            android:textSize="24sp" />
+
         <Button
             android:id="@+id/btn_cell_02"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:textSize="24sp"
-            android:textColor="@color/md_theme_primary"
-            android:background="@drawable/round_shape" />
+            android:background="@drawable/button_table_background"
+            android:textColor="@color/md_theme_onBackground_highContrast"
+            android:textSize="24sp" />
 
         <!-- Fila 2 -->
         <Button
@@ -101,27 +105,29 @@
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:textSize="24sp"
-            android:textColor="@color/md_theme_primary"
-            android:background="@drawable/round_shape" />
+            android:background="@drawable/button_table_background"
+            android:textColor="@color/md_theme_onBackground_highContrast"
+            android:textSize="24sp" />
+
         <Button
             android:id="@+id/btn_cell_11"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:textSize="24sp"
-            android:textColor="@color/md_theme_primary"
-            android:background="@drawable/round_shape" />
+            android:background="@drawable/button_table_background"
+            android:textColor="@color/md_theme_onBackground_highContrast"
+            android:textSize="24sp" />
+
         <Button
             android:id="@+id/btn_cell_12"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:textSize="24sp"
-            android:textColor="@color/md_theme_primary"
-            android:background="@drawable/round_shape" />
+            android:background="@drawable/button_table_background"
+            android:textColor="@color/md_theme_onBackground_highContrast"
+            android:textSize="24sp" />
 
         <!-- Fila 3 -->
         <Button
@@ -130,27 +136,29 @@
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:textSize="24sp"
-            android:textColor="@color/md_theme_primary"
-            android:background="@drawable/round_shape" />
+            android:background="@drawable/button_table_background"
+            android:textColor="@color/md_theme_onBackground_highContrast"
+            android:textSize="24sp" />
+
         <Button
             android:id="@+id/btn_cell_21"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:textSize="24sp"
-            android:textColor="@color/md_theme_primary"
-            android:background="@drawable/round_shape" />
+            android:background="@drawable/button_table_background"
+            android:textColor="@color/md_theme_onBackground_highContrast"
+            android:textSize="24sp" />
+
         <Button
             android:id="@+id/btn_cell_22"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:textSize="24sp"
-            android:textColor="@color/md_theme_primary"
-            android:background="@drawable/round_shape" />
+            android:background="@drawable/button_table_background"
+            android:textColor="@color/md_theme_onBackground_highContrast"
+            android:textSize="24sp" />
     </GridLayout>
 
     <!-- Botón para reiniciar la partida -->
@@ -158,13 +166,14 @@
         android:id="@+id/btn_restart_game"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reiniciar Partida"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/round_shape"
-        android:textColor="@color/md_theme_inverseSurface"
+        android:padding="15dp"
+        android:text="Reiniciar Partida"
+        android:textColor="@color/md_theme_surface"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

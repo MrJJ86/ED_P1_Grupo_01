@@ -1,5 +1,7 @@
 package com.game.ed_p1_grupo_01.modelo;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,7 +135,7 @@ public class GameTable implements Serializable {
         return false;
     }
 
-    private static ArrayList<Token> isGameWin(ArrayList<Token> tokens) {
+    public static ArrayList<Token> isGameWin(ArrayList<Token> tokens) {
         Map<String, Token> tokenMap = new HashMap<>();
         for (Token token : tokens) {
             String key = token.getPositionX() + "," + token.getPositionY();
@@ -236,62 +238,91 @@ public class GameTable implements Serializable {
         return null;
     }
 
-    public void computerProcess(boolean isplayer1) {
-        gameTree = Tree.TreeTable(this);
-        Map<GameTable, Integer> utilityMap = new HashMap<>();
+    public HashMap<GameTable, Integer> computerProcess(boolean isplayer1) {
+        gameTree = Tree.TreeTable(this.clone());
+        Map<GameTable, Integer> utilityFirstChildMap = new HashMap<>();
+        HashMap<GameTable, Integer> utilityTree = new HashMap<>();
 
         for (Tree<GameTable> treeTable : gameTree.getRoot().getChildren()) {
             int tableUtility = Integer.MAX_VALUE;
             for (Tree<GameTable> childTreeTable : treeTable.getRoot().getChildren()) {
                 GameTable table = childTreeTable.getRoot().getContent();
 
-                ArrayList<Token> computer = table.getPlayer1Tokens();
-                ArrayList<Token> player = table.getPlayer2Tokens();
+                ArrayList<Token> computer;
+                ArrayList<Token> player;
+                int currentUtility;
 
-                int currentUtility = table.calculateU(computer, player);
+                if(isplayer1){
+                    computer = table.getPlayer1Tokens();
+                    player = table.getPlayer2Tokens();
+                    currentUtility = table.calculateU(computer, player);
+                }else{
+                    Log.i("parametros", "computerProcess: ");
+                    computer = table.getPlayer2Tokens();
+                    player = table.getPlayer1Tokens();
+                    currentUtility = table.calculateU(player, computer);
+                }
+
                 tableUtility = Math.min(currentUtility, tableUtility);
+                utilityTree.put(table, currentUtility);
 
             }
-            utilityMap.put(treeTable.getRoot().getContent(), tableUtility);
+            utilityFirstChildMap.put(treeTable.getRoot().getContent(), tableUtility);
         }
 
-        Iterator<GameTable> iteratorKey = utilityMap.keySet().iterator();
+        utilityTree.putAll(utilityFirstChildMap);
+
+        Iterator<GameTable> iteratorKey = utilityFirstChildMap.keySet().iterator();
         int maxUtility = Integer.MIN_VALUE;
         while (iteratorKey.hasNext()) {
-            int utility = utilityMap.get(iteratorKey.next());
+            int utility = utilityFirstChildMap.get(iteratorKey.next());
             maxUtility = Math.max(maxUtility, utility);
         }
 
-        for (GameTable table : utilityMap.keySet()) {
-            int utility = utilityMap.get(table);
+        for (GameTable table : utilityFirstChildMap.keySet()) {
+            int utility = utilityFirstChildMap.get(table);
             if (utility == maxUtility) {
-                int x = -1, y = -1;
-
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 3; j++) {
-                        if (!estaOcupado(table, i, j)) {
-                            x = i;
-                            y = j;
-                            break;
-                        }
-                    }
-                    if (x != -1 && y != -1) break;
+                //Siguiente Token que depende del turno del computador
+                Token nextToken;
+                Log.i("parametros", "computerProcess Table: " + table.getTokens());
+                if(isplayer1){
+                    nextToken = table.getPlayer1Tokens().get(table.getPlayer1Tokens().size()-1);
+                }else{
+                    nextToken = table.getPlayer2Tokens().get(table.getPlayer2Tokens().size()-1);
                 }
-
-                Token nextToken = new Token(isplayer1, x, y);
-                table.setToken(nextToken);
+                Log.i("parametros", "nextToken: " + nextToken);
                 this.setToken(nextToken);
                 break;
             }
         }
+        return utilityTree;
     }
 
-    private boolean estaOcupado(GameTable table, int x, int y) {
-        for (Token token : table.getTokens()) {
-            if (token.getPositionX() == x && token.getPositionY() == y) {
-                return true;
-            }
-        }
-        return false;
+    @Override
+    public String toString() {
+        return "GameTable{" +
+                "tokens=" + tokens +
+                ", player1Symbol='" + player1Symbol + '\'' +
+                ", player2Symbol='" + player2Symbol + '\'' +
+                ", player1Start=" + player1Start +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GameTable gameTable = (GameTable) o;
+        return player1Start == gameTable.player1Start && tokens.equals(gameTable.tokens) && player1Symbol.equals(gameTable.player1Symbol) && player2Symbol.equals(gameTable.player2Symbol);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = tokens.hashCode();
+        result = 31 * result + player1Symbol.hashCode();
+        result = 31 * result + player2Symbol.hashCode();
+        result = 31 * result + Boolean.hashCode(player1Start);
+        return result;
     }
 }

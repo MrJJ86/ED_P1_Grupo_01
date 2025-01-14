@@ -2,6 +2,7 @@ package com.game.ed_p1_grupo_01.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import com.game.ed_p1_grupo_01.modelo.GameTable;
 import com.game.ed_p1_grupo_01.modelo.Token;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Activity para manejar la lógica y la interfaz del tablero de juego.
@@ -22,6 +24,10 @@ public class GameBoardActivity extends AppCompatActivity {
     private GameTable gameTable; // Modelo lógico del tablero
     private TextView tvTurnIndicator; // Indicador de turno
     private String gameMode; // Modo de juego (PLAYER_VS_PC, PLAYER_VS_PLAYER, PC_VS_PC)
+    private HashMap<GameTable, Integer> utilityTree;
+    private boolean player1Starts;
+    private String startingPlayer;
+    private String symbol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +42,11 @@ public class GameBoardActivity extends AppCompatActivity {
 
         // Obtener configuraciones del Intent
         gameMode = getIntent().getStringExtra("MODE");
-        String startingPlayer = getIntent().getStringExtra("STARTING_PLAYER");
-        String symbol = getIntent().getStringExtra("SYMBOL");
+        startingPlayer = getIntent().getStringExtra("STARTING_PLAYER");
+        symbol = getIntent().getStringExtra("SYMBOL");
 
         // Configurar quién inicia el juego
-        boolean player1Starts = "PLAYER_1".equals(startingPlayer);
+        player1Starts = "PLAYER_1".equalsIgnoreCase(startingPlayer);
         configureStartingPlayer(player1Starts, symbol);
 
         // Configurar listeners para los botones del tablero
@@ -62,6 +68,8 @@ public class GameBoardActivity extends AppCompatActivity {
         // Botón para visualizar los árboles (implementación futura)
         btnViewTrees.setOnClickListener(view -> {
             Intent intent = new Intent(GameBoardActivity.this, TreeVisualizationActivity.class);
+            intent.putExtra("table", gameTable);
+            intent.putExtra("utility", utilityTree);
             startActivity(intent);
         });
 
@@ -109,7 +117,7 @@ public class GameBoardActivity extends AppCompatActivity {
      */
     private void setUpBoardListeners(boolean player1Start) {
         if(!player1Start && gameMode.equals("PLAYER_VS_PC")){
-            gameTable.computerProcess(false);
+            utilityTree = gameTable.computerProcess(true);
             updateBoardFromLogic();
             gameTable.player1Start=false;//Cambia el valor por default de player1Start para que el metodo de player1turn cambie su return
         }
@@ -120,7 +128,7 @@ public class GameBoardActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         if (gameTable.isPlayer1Turn()) {
                             tvTurnIndicator.setText("Turno: PC 1");
-                            gameTable.computerProcess(true); // Como envio true al metodo, la compu asume que ella es la player1
+                            utilityTree = gameTable.computerProcess(true); // Como envio true al metodo, la compu asume que ella es la player1
                             updateBoardFromLogic();
 
                             if (gameTable.gameIsEnd()) {
@@ -130,7 +138,7 @@ public class GameBoardActivity extends AppCompatActivity {
 
                         } else {
                             tvTurnIndicator.setText("Turno: PC 2");
-                            gameTable.computerProcess(false); //Al enviar false la computadora sabe que es la player2
+                            utilityTree = gameTable.computerProcess(false); //Al enviar false la computadora sabe que es la player2
                             updateBoardFromLogic();
 
                             if (gameTable.gameIsEnd()) {//Comprueba si se acabo el juego
@@ -175,20 +183,24 @@ public class GameBoardActivity extends AppCompatActivity {
         boardButtons[x][y].setText(isPlayer1Turn ? gameTable.getPlayer1Symbol() : gameTable.getPlayer2Symbol());
         boardButtons[x][y].setEnabled(false);
 
-        // Verificar si el juego terminó
-        if (gameTable.gameIsEnd()) {
-            endGame();
-            return;
-        }
-
         // Lógica para los modos de juego
         if (gameMode.equals("PLAYER_VS_PC") && !gameTable.isPlayer1Turn()) {
-            gameTable.computerProcess(false);
+            Log.i("parametros", "player_pc: ");
+            if(player1Starts){
+                utilityTree = gameTable.computerProcess(false); // Jugador Inicia
+            }else{
+                utilityTree = gameTable.computerProcess(true); // Computador Inicia
+            }
             updateBoardFromLogic();
         }
 
         // Actualizar el indicador de turno
-        tvTurnIndicator.setText(gameTable.isPlayer1Turn() ? "Turno: Jugador 1" : "Turno: Jugador 2");
+        tvTurnIndicator.setText(isPlayer1Turn ? "Turno: Jugador 1" : "Turno: Jugador 2");
+
+        // Verificar si el juego terminó
+        if (gameTable.gameIsEnd()) {
+            endGame();
+        }
     }
 
     /**
@@ -207,22 +219,46 @@ public class GameBoardActivity extends AppCompatActivity {
      * Reinicia el estado del juego y limpia la interfaz.
      */
     private void restartGame() {
-        gameTable = new GameTable();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                boardButtons[i][j].setText("");
-                boardButtons[i][j].setEnabled(true);
-            }
-        }
-        tvTurnIndicator.setText("Turno: Jugador 1");
+        Intent intent = new Intent(GameBoardActivity.this, GameBoardActivity.class);
+        intent.putExtra("MODE", gameMode);
+        intent.putExtra("SYMBOL", symbol);
+        intent.putExtra("STARTING_PLAYER", startingPlayer);
+        startActivity(intent);
+        finish();
     }
 
     /**
      * Maneja el final del juego.
      */
     private void endGame() {
+        String player1 = "Jugador 1";
+        String player2 = "Jugador 2";
+        boolean playerTurn = gameTable.isPlayer1Turn();
+        if(gameMode.equals("PLAYER_VS_PC")){
+            playerTurn = !playerTurn;
+            if(player1Starts){
+                player1 = "Jugador";
+                player2 = "Computadora";
+            }else{
+                player1 = "Computadora";
+                player2 = "Jugador";
+            }
+        }else if (gameMode.equals("PC_VS_PC")){
+            if(player1Starts){
+                player1 = "Computadora 1";
+                player2 = "Computadora 2";
+                playerTurn = !playerTurn;
+            }else{
+                player1 = "Computadora 2";
+                player2 = "Computadora 1";
+            }
+        }
+        //TODO: Falta Comprobar la elección de etiqueta
+        Log.i("parametros", "PlayerTurnAfter: " + playerTurn);
+        Log.i("parametros", "player1: " + player1);
+        Log.i("parametros", "player2: " + player2);
         Intent intent = new Intent(GameBoardActivity.this, ResultActivity.class);
-        intent.putExtra("WINNER", gameTable.isPlayer1Turn() ? "Jugador 1" : "Jugador 2");
+        intent.putExtra("WINNER", playerTurn ? player1 : player2);
         startActivity(intent);
         finish();
     }

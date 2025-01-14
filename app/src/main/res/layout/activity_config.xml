@@ -44,9 +44,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="Configuración del Juego"
-        android:textStyle="bold"
-        android:textColor="@color/md_theme_primary"
+        android:textColor="@color/md_theme_onBackground"
         android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_back" />
@@ -137,13 +137,14 @@
         android:id="@+id/btn_start_game"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Iniciar Juego"
+        android:layout_marginTop="40dp"
         android:background="@drawable/round_shape"
+        android:padding="15dp"
+        android:text="Iniciar Juego"
         android:textColor="@color/md_theme_surfaceContainerLow"
         android:textSize="25sp"
-        app:layout_constraintTop_toBottomOf="@id/rg_starting_player"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="40dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rg_starting_player" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

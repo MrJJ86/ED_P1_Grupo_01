@@ -15,41 +15,45 @@
         android:id="@+id/tv_result_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:text="¡Resultado del Juego!"
-        android:textColor="@color/md_theme_primary"
+        android:textColor="@color/md_theme_onBackground"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Botón para volver al menú principal -->
     <Button
         android:id="@+id/btn_main_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Volver al Menú Principal"
-        android:textColor="@color/md_theme_inverseSurface"
-        android:textSize="18sp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/round_shape"
-        app:layout_constraintTop_toBottomOf="@id/tv_result_message"
-        app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="@color/md_theme_tertiary"
+        android:padding="15dp"
+        android:text="Volver al Menú Principal"
+        android:textColor="@color/md_theme_inverseOnSurface"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_result_message" />
 
     <!-- Botón para jugar de nuevo -->
     <Button
         android:id="@+id/btn_play_again"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Jugar de Nuevo"
-        android:textColor="@color/md_theme_inverseSurface"
-        android:textSize="18sp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/round_shape"
-        app:layout_constraintTop_toBottomOf="@id/btn_main_menu"
-        app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="@color/md_theme_tertiary"
+        android:padding="15dp"
+        android:text="Jugar de Nuevo"
+        android:textColor="@color/md_theme_inverseOnSurface"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_main_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

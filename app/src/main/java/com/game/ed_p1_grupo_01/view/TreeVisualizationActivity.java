@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -52,12 +53,19 @@ public class TreeVisualizationActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        ImageButton returnButton = findViewById(R.id.btn_back_to_game);
+        returnButton.setOnClickListener(v -> {
+            this.finish();;
+        });
+
         isComputerFirst = true;
         table = getIntent().getExtras().getSerializable("table", GameTable.class);
         Log.i("Table", "onCreate: " + table);
         utilityTree = (HashMap<GameTable, Integer>) getIntent().getExtras().getSerializable("utility", HashMap.class);
         Log.i("Table", "onCreate: " + utilityTree);
         generateTreeTable();
+
+
     }
 
     private LinearLayout createTableTemplate(){
@@ -139,16 +147,14 @@ public class TreeVisualizationActivity extends AppCompatActivity {
         containerFirstLevel.setOrientation(LinearLayout.HORIZONTAL);
         containerFirstLevel.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         containerFirstLevel.setPadding(5,5,5,5);
-        int listChildrenSize = treeTable.getRoot().getChildren().size();
-        int divider = R.drawable.spacer_large;
 
-        if(listChildrenSize < 6){
-            divider = R.drawable.spacer_large_6;
-        }else if(listChildrenSize < 9){
-            divider = R.drawable.spacer_large_8;
-        }else if(listChildrenSize == 9){
-            divider = R.drawable.spacer_extra_larger;
-        }
+        int listChildrenSize = treeTable.getRoot().getChildren().size();
+        Log.i("parametros", "generateTreeTable: " + listChildrenSize);
+        int[] spacers = {R.drawable.spacer_midium,R.drawable.spacer_large,R.drawable.spacer_large_3,
+                        R.drawable.spacer_large_4,R.drawable.spacer_large_5,R.drawable.spacer_large_6,
+                        R.drawable.spacer_large_7,R.drawable.spacer_large_8,R.drawable.spacer_extra_larger};
+        int divider = listChildrenSize > 0 ? spacers[listChildrenSize-1] : spacers[0];
+
         containerFirstLevel.setDividerDrawable(AppCompatResources.getDrawable(containerRoot.getContext(), divider));
         containerFirstLevel.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
 
@@ -171,7 +177,9 @@ public class TreeVisualizationActivity extends AppCompatActivity {
             setImageToken(firstChildTokenMap, containerFirstChild);
             // UTILIDAD
             TextView firstChildUtility = containerFirstChild.findViewWithTag("Utility");
-            String firstUtility = String.valueOf(utilityTree.get(firstChildTable));
+            int utilityNumber = utilityTree.get(firstChildTable);
+            String firstUtility = String.valueOf(utilityNumber == Integer.MAX_VALUE ? "" : utilityNumber);
+
             firstChildUtility.setText(firstUtility);
             firstChildUtility.setVisibility(View.VISIBLE);
 
