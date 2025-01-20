@@ -38,8 +38,6 @@ import java.util.Map;
 
 public class TreeVisualizationActivity extends AppCompatActivity {
 
-    //TODO: Eliminar este variable cuando se tenga el tablero actual correctamente
-    boolean isComputerFirst;
     GameTable table;
     HashMap<GameTable, Integer> utilityTree;
 
@@ -58,7 +56,6 @@ public class TreeVisualizationActivity extends AppCompatActivity {
             this.finish();;
         });
 
-        isComputerFirst = true;
         table = getIntent().getExtras().getSerializable("table", GameTable.class);
         Log.i("Table", "onCreate: " + table);
         utilityTree = (HashMap<GameTable, Integer>) getIntent().getExtras().getSerializable("utility", HashMap.class);

@@ -26,6 +26,9 @@ public class ResultActivity extends AppCompatActivity {
 
         // Recuperar el resultado del Intent
         String winner = getIntent().getStringExtra("WINNER");
+        String gameMode = getIntent().getStringExtra("MODE");
+        String startingPlayer = getIntent().getStringExtra("STARTING_PLAYER");
+        String symbol = getIntent().getStringExtra("SYMBOL");
 
         // Mostrar el mensaje adecuado según el resultado
         if (winner != null) {
@@ -47,6 +50,9 @@ public class ResultActivity extends AppCompatActivity {
         // Configurar el botón "Jugar de Nuevo"
         btnPlayAgain.setOnClickListener(view -> {
             Intent intent = new Intent(ResultActivity.this, GameBoardActivity.class);
+            intent.putExtra("MODE", gameMode);
+            intent.putExtra("SYMBOL", symbol);
+            intent.putExtra("STARTING_PLAYER", startingPlayer);
             startActivity(intent);
             finish();
         });
