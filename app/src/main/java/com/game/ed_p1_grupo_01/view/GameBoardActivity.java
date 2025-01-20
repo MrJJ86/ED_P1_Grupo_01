@@ -269,33 +269,36 @@ public class GameBoardActivity extends AppCompatActivity {
      * Maneja el final del juego.
      */
     private void endGame() {
-        //TODO: FALTA DETERMINAR EL EMPATE
         String winnerText;
-        boolean playerTurn = gameTable.isPlayer1Turn(); // Determina quién tiene el turno actual
 
-        if (gameMode.equals("PLAYER_VS_PC")) {
-            if (player1Starts) {
-                // Caso: Jugador comienza
-                winnerText = playerTurn ? "Computadora" : "Jugador";
+        // Obtener las fichas ganadoras de cada jugador
+        ArrayList<Token> firstPlayerTokens = GameTable.isGameWin(gameTable.getPlayer1Tokens());
+        ArrayList<Token> secondPlayerTokens = GameTable.isGameWin(gameTable.getPlayer2Tokens());
+
+        // Empate
+        if (firstPlayerTokens == null && secondPlayerTokens == null) {
+            winnerText = "DRAW";
+        } else if (firstPlayerTokens != null && secondPlayerTokens == null) {
+            // Gana el jugador 1
+            if (gameMode.equals("PLAYER_VS_PC")) {
+                winnerText = player1Starts ? "Jugador" : "Computadora";
+            } else if (gameMode.equals("PC_VS_PC")) {
+                winnerText = player1Starts ? "Computadora 1" : "Computadora 2";
             } else {
-                // Caso: Computadora comienza
-                winnerText = playerTurn ? "Jugador" : "Computadora";
+                winnerText = player1Starts ? "Jugador 1" : "Jugador 2";
             }
-        } else if (gameMode.equals("PC_VS_PC")) {
-            if (player1Starts) {
-                // Caso: Computadora 1 comienza
-                winnerText = playerTurn ? "Computadora 2" : "Computadora 1";
+        } else if (firstPlayerTokens == null && secondPlayerTokens != null) {
+            // Gana el jugador 2
+            if (gameMode.equals("PLAYER_VS_PC")) {
+                winnerText = player1Starts ? "Computadora" : "Jugador";
+            } else if (gameMode.equals("PC_VS_PC")) {
+                winnerText = player1Starts ? "Computadora 2" : "Computadora 1";
             } else {
-                // Caso: Computadora 2 comienza
-                winnerText = playerTurn ? "Computadora 1" : "Computadora 2";
+                winnerText = player1Starts ? "Jugador 2" : "Jugador 1";
             }
         } else {
-            // Modo PLAYER_VS_PLAYER
-            if(player1Starts){
-                winnerText = playerTurn ? "Jugador 2" : "Jugador 1";
-            }else{
-                winnerText = playerTurn ? "Jugador 1" : "Jugador 2";
-            }
+            // Esto no debería ocurrir, pero por seguridad se maneja.
+            winnerText = "Error: Estado inesperado";
         }
 
         // Log para verificar el resultado
@@ -310,5 +313,6 @@ public class GameBoardActivity extends AppCompatActivity {
         startActivity(intent);
         finish(); // Finalizar la actividad actual
     }
+
 
 }

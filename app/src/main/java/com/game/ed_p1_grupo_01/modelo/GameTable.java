@@ -122,15 +122,12 @@ public class GameTable implements Serializable {
 
     public boolean gameIsEnd() {
         if (tokens.size() >= 5) {
-            ArrayList<Token> player1 = new ArrayList<>();
-            ArrayList<Token> player2 = new ArrayList<>();
+            ArrayList<Token> player1 = isGameWin(getPlayer1Tokens());
+            ArrayList<Token> player2 = isGameWin(getPlayer2Tokens());
 
-            for (Token token : tokens) {
-                if (token.isPlayer1()) player1.add(token);
-                else player2.add(token);
-            }
+            if(tokens.size() == 9) return true;
 
-            return isGameWin(player1) != null || isGameWin(player2) != null;
+            return player1 != null || player2 != null;
         }
         return false;
     }
